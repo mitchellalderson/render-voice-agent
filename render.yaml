@@ -1,0 +1,74 @@
+services:
+  # Next.js Web Application
+  - type: web
+    name: voice-agent-app
+    runtime: docker
+    plan: starter
+    region: oregon
+    
+    # Use the root Dockerfile for the Next.js app
+    dockerfilePath: ./Dockerfile
+    
+    # Environment variables for the Next.js app
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: LIVEKIT_API_KEY
+        sync: false
+      - key: LIVEKIT_API_SECRET
+        sync: false
+      - key: LIVEKIT_URL
+        sync: false
+    
+    # Health check endpoint
+    healthCheckPath: /
+    
+    # Auto-deploy from main branch
+    autoDeploy: true
+
+  # LiveKit Voice Agent (Private Service)
+  - type: pserv
+    name: voice-agent-worker
+    runtime: docker
+    plan: starter
+    region: oregon
+    
+    # Use the agent Dockerfile
+    dockerfilePath: ./agent/Dockerfile
+    dockerContext: .
+    
+    # Environment variables for the agent
+    # Create an environment variable group in Render dashboard
+    # with these keys and add them to: voice-agent-env
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: LIVEKIT_API_KEY
+        sync: false
+      - key: LIVEKIT_API_SECRET
+        sync: false
+      - key: LIVEKIT_URL
+        sync: false
+      - key: RIME_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ASSEMBLYAI_API_KEY
+        sync: false
+    
+    # Allow graceful shutdown for active agent sessions
+    # 300s is the standard maximum. Contact Render support if you need more.
+    maxShutdownDelaySeconds: 300
+    
+    # Auto-scaling configuration
+    scaling:
+      minInstances: 1
+      maxInstances: 4
+      targetCPUPercent: 60
+      targetMemoryPercent: 60
+    
+    # Auto-deploy from main branch
+    autoDeploy: true
+
+version: "1"
+
