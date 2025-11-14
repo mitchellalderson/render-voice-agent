@@ -3,11 +3,16 @@ services:
   - type: web
     name: voice-agent-app
     runtime: docker
-    plan: starter
+    plan: standard
     region: oregon
     
     # Use the root Dockerfile for the Next.js app
     dockerfilePath: ./Dockerfile
+    
+    # Build arguments for Next.js (public env vars need to be available at build time)
+    dockerBuildArgs:
+      - key: NEXT_PUBLIC_LIVEKIT_URL
+        sync: false
     
     # Environment variables for the Next.js app
     envVars:
@@ -32,7 +37,7 @@ services:
   - type: pserv
     name: voice-agent-worker
     runtime: docker
-    plan: starter
+    plan: standard
     region: oregon
     
     # Use the agent Dockerfile
