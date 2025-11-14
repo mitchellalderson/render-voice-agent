@@ -104,6 +104,7 @@ export default function VoiceAgent({ roomName = 'voice-agent-room' }: VoiceAgent
   const [canRender, setCanRender] = useState(false);
 
   const serverUrl = process.env.NEXT_PUBLIC_LIVEKIT_URL || '';
+  console.log('serverUrl', serverUrl);
 
   const connectToAgent = useCallback(async () => {
     if (isConnecting || isConnected) return;
