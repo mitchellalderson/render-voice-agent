@@ -1,88 +1,95 @@
 # Quick Start Guide
 
-Get your voice agent up and running in 5 minutes!
+Get your voice agent up and running in 5 minutes with Docker!
 
 ## Prerequisites
 
-- Node.js 20+ installed
-- LiveKit Cloud account (free at https://cloud.livekit.io)
-- Rime API key (from https://rime.ai/)
-- LiveKit CLI installed
+- **Docker Desktop** installed ([download here](https://www.docker.com/products/docker-desktop))
+- **LiveKit Cloud account** (free at https://cloud.livekit.io)
+- **API Keys** (optional, but recommended):
+  - Rime API key from https://rime.ai/ (for better TTS)
+  - OpenAI API key (for GPT-4)
+  - AssemblyAI API key (for STT)
+
+💡 **Note**: You can use LiveKit's built-in AI services without providing API keys, but having your own keys gives you more control and potentially lower costs.
 
 ## Step-by-Step Setup
 
-### 1. Install LiveKit CLI
+### 1. Get LiveKit Credentials
 
-**macOS:**
+**Option A: Using LiveKit CLI (Recommended)**
+
+Install the CLI:
 ```bash
+# macOS
 brew install livekit-cli
-```
 
-**Linux:**
-```bash
+# Linux
 curl -sSL https://get.livekit.io/cli | bash
-```
 
-**Windows:**
-```bash
+# Windows
 winget install LiveKit.LiveKitCLI
 ```
 
-### 2. Get LiveKit Credentials
-
+Get your credentials:
 ```bash
 lk cloud auth
 lk app env -w
 ```
 
-This automatically creates `.env.local` with your LiveKit credentials.
+This automatically creates `.env.local` with your LiveKit credentials!
 
-### 3. Add Missing Environment Variables
+**Option B: Manual Setup**
 
-Edit `.env.local` and add:
+1. Go to https://cloud.livekit.io
+2. Create a project
+3. Copy your API Key, API Secret, and WebSocket URL
+4. Create `.env.local` in the project root
+
+### 2. Configure Environment Variables
+
+Edit `.env.local` to ensure it has all required variables:
 
 ```bash
-# Add your Rime API key
-RIME_API_KEY=your_rime_api_key_here
+# LiveKit Cloud Configuration (from step 1)
+LIVEKIT_API_KEY=your_livekit_api_key_here
+LIVEKIT_API_SECRET=your_livekit_api_secret_here
+LIVEKIT_URL=wss://your-project.livekit.cloud
 
-# Add public LiveKit URL (same as LIVEKIT_URL)
+# Public LiveKit URL (required for browser - same as LIVEKIT_URL)
 NEXT_PUBLIC_LIVEKIT_URL=wss://your-project.livekit.cloud
+
+# Optional: Your own API keys for better control
+RIME_API_KEY=your_rime_api_key_here
+OPENAI_API_KEY=your_openai_api_key_here
+ASSEMBLYAI_API_KEY=your_assemblyai_api_key_here
 ```
 
-💡 **Tip**: Copy the value from `LIVEKIT_URL` and paste it into `NEXT_PUBLIC_LIVEKIT_URL`
+💡 **Important**: Make sure `NEXT_PUBLIC_LIVEKIT_URL` matches your `LIVEKIT_URL`!
 
-### 4. Download Model Files
+### 3. Start Everything with Docker Compose
+
+That's it! One command to start both the web app and the agent:
 
 ```bash
-npm run agent:download
+docker-compose -f docker-compose.dev.yml up
 ```
 
-This downloads the AI models needed for voice activity detection and turn detection. ☕ Grab a coffee, this takes a minute!
+This will:
+- ✅ Install all dependencies
+- ✅ Download AI model files automatically
+- ✅ Start the Next.js web app on http://localhost:3000
+- ✅ Start the voice agent and connect to LiveKit Cloud
+- ✅ Enable hot-reload for development
 
-### 5. Start the Agent (Terminal 1)
+☕ **First time?** The initial build takes 2-3 minutes. Grab a coffee!
 
-```bash
-npm run agent:dev
-```
+### 4. Test Your Agent
 
-You should see:
-```
-✓ Worker started
-✓ Connected to LiveKit Cloud
-```
-
-### 6. Start the Web App (Terminal 2)
-
-```bash
-npm run dev
-```
-
-### 7. Test Your Agent
-
-1. Open http://localhost:3000
+1. Open **http://localhost:3000** in your browser
 2. Click **"Start Conversation"**
-3. Allow microphone access
-4. Say "Hello!" and wait for the response
+3. Allow microphone access when prompted
+4. Say **"Hello!"** and wait for the AI response
 
 🎉 **Congratulations!** Your AI voice assistant is working!
 
@@ -91,109 +98,240 @@ npm run dev
 ### "Missing NEXT_PUBLIC_LIVEKIT_URL"
 
 ➜ **Solution**: Add this line to `.env.local`:
-```
+```bash
 NEXT_PUBLIC_LIVEKIT_URL=wss://your-project.livekit.cloud
 ```
 (Use the same value as `LIVEKIT_URL`)
 
-### Agent doesn't respond
+### Agent can't connect to LiveKit Cloud
 
-➜ **Solution**: Make sure both terminals are running:
-- Terminal 1: `npm run agent:dev` (the agent)
-- Terminal 2: `npm run dev` (the web app)
+➜ **Solution**: Check your credentials in `.env.local`:
+```bash
+docker-compose -f docker-compose.dev.yml logs agent
+```
+
+### Port 3000 already in use
+
+➜ **Solution**: Stop other services using port 3000 or change the port in `docker-compose.dev.yml`:
+```yaml
+ports:
+  - "3001:3000"  # Use port 3001 instead
+```
 
 ### No microphone access
 
 ➜ **Solution**: Click the lock icon in your browser's address bar and allow microphone access.
 
-### "Failed to download model files"
+### Need to restart after code changes?
 
-➜ **Solution**: Run with better error output:
+➜ **No!** Docker Compose dev mode has hot-reload enabled. Just save your files and changes will reflect automatically.
+
+## Docker Commands Reference
+
 ```bash
-npm run agent:build
-node agent.js download-files
+# Development (with hot-reload)
+docker-compose -f docker-compose.dev.yml up          # Start in foreground
+docker-compose -f docker-compose.dev.yml up -d       # Start in background
+docker-compose -f docker-compose.dev.yml down        # Stop services
+docker-compose -f docker-compose.dev.yml logs -f     # View logs
+
+# Production
+docker-compose up --build                            # Build and start
+docker-compose down                                  # Stop services
+
+# Useful Commands
+docker-compose -f docker-compose.dev.yml logs agent  # View agent logs only
+docker-compose -f docker-compose.dev.yml logs app    # View app logs only
+docker-compose -f docker-compose.dev.yml restart     # Restart all services
+docker-compose -f docker-compose.dev.yml ps          # Check service status
 ```
 
 ## What's Next?
 
 ### Customize Your Agent
 
-Edit `agent.ts` to change:
-- **Voice**: Change `speaker: "rainforest"` to another Rime voice
-- **Personality**: Update the `instructions` text
-- **Speed**: Adjust `speedAlpha` (0.9 = faster, 1.1 = slower)
+1. Edit `agent/agent.ts` to change:
+   - **Voice**: Change `speaker: "rainforest"` to another Rime voice
+   - **Personality**: Update the `instructions` text
+   - **Speed**: Adjust `speedAlpha` (0.9 = faster, 1.1 = slower)
 
-### Deploy to Production
+2. Save the file - changes will automatically reload! ✨
+
+### Customize the UI
+
+1. Edit `app/components/VoiceAgent.tsx` to modify the interface
+2. Edit `app/page.tsx` to change the home page
+3. Changes reflect immediately with hot-reload
+
+### View Logs & Debug
+
+See what's happening in real-time:
 
 ```bash
-# Deploy the web app
-vercel deploy
+# View all logs
+docker-compose -f docker-compose.dev.yml logs -f
 
-# Deploy the agent to LiveKit Cloud
-lk agent create
+# View only agent logs (useful for debugging AI responses)
+docker-compose -f docker-compose.dev.yml logs -f agent
+
+# View only app logs (useful for frontend issues)
+docker-compose -f docker-compose.dev.yml logs -f app
 ```
+
+### Deploy to Production (Render)
+
+This project is configured to deploy to [Render](https://render.com) with automatic scaling and zero-downtime deployments.
+
+⚠️ **Important**: The agent service requires **at least 8 GB of RAM**. Use Render's **Standard plan or higher** for the agent worker.
+
+**Step 1: Push to GitHub**
+
+```bash
+git add .
+git commit -m "Initial commit"
+git push origin main
+```
+
+**Step 2: Connect to Render**
+
+1. Go to [dashboard.render.com](https://dashboard.render.com)
+2. Click **"New"** → **"Blueprint"**
+3. Connect your GitHub repository
+4. Render will automatically detect `render.yaml`
+
+**Step 3: Configure Environment Variables**
+
+In the Render dashboard, add these environment variables to both services:
+
+```bash
+# Required for both services
+LIVEKIT_API_KEY=your_livekit_api_key
+LIVEKIT_API_SECRET=your_livekit_api_secret
+LIVEKIT_URL=wss://your-project.livekit.cloud
+NEXT_PUBLIC_LIVEKIT_URL=wss://your-project.livekit.cloud
+
+# Required for agent service only
+RIME_API_KEY=your_rime_api_key
+OPENAI_API_KEY=your_openai_api_key
+ASSEMBLYAI_API_KEY=your_assemblyai_api_key
+```
+
+**Step 4: Deploy**
+
+Click **"Apply"** and Render will:
+- ✅ Build both Docker images
+- ✅ Deploy the web app (publicly accessible)
+- ✅ Deploy the agent worker (private service)
+- ✅ Set up auto-scaling (1-4 instances)
+- ✅ Enable auto-deploy on git push
+
+**Your app will be live at:** `https://voice-agent-app.onrender.com` (or your custom domain)
+
+**Future deployments:** Just `git push` and Render auto-deploys! 🚀
+
+💡 **Tip**: The `render.yaml` file configures everything automatically. Check it out to customize regions, scaling, or resources.
 
 ### Learn More
 
-- 📖 [Full Integration Guide](INTEGRATION_GUIDE.md)
-- 📖 [Agent Documentation](AGENT_README.md)
-- 🌐 [LiveKit Docs](https://docs.livekit.io)
-- 💬 [LiveKit Discord](https://livekit.io/discord)
+- 📖 [Docker Deployment Guide](DOCKER.md) - Advanced Docker configuration
+- 📖 [Agent Documentation](agent/AGENT_README.md) - Customize your agent
+- 🌐 [LiveKit Docs](https://docs.livekit.io) - Full LiveKit documentation
+- 💬 [LiveKit Discord](https://livekit.io/discord) - Get help from the community
 
-## Quick Commands Reference
+## Architecture Overview
+
+Docker Compose runs two services that work together:
+
+```
+┌─────────────────────────────────────────────────────┐
+│  Docker Compose Network (livekit-network)          │
+│                                                     │
+│  ┌──────────────────┐      ┌──────────────────┐   │
+│  │   App Service    │      │  Agent Service   │   │
+│  │  (Port 3000)     │      │                  │   │
+│  │                  │      │  Connects to:    │   │
+│  │  Next.js + React │      │  - LiveKit Cloud │   │
+│  │  Voice Interface │◄─────┤  - Rime TTS      │   │
+│  │                  │      │  - OpenAI GPT    │   │
+│  └──────────────────┘      │  - AssemblyAI    │   │
+│                            └──────────────────┘   │
+└─────────────────────────────────────────────────────┘
+         ↕                           ↕
+    [Browser]                [LiveKit Cloud]
+                                  ↕
+                           [WebRTC Audio Stream]
+```
+
+**How it works:**
+1. User speaks in browser → Audio sent to LiveKit Cloud via WebRTC
+2. Agent receives audio → Processes with AI (STT → LLM → TTS)
+3. Agent sends response → LiveKit Cloud → User hears AI voice
+
+## Why Docker?
+
+✅ **No dependency issues** - Everything runs in isolated containers  
+✅ **Consistent environment** - Works the same on Mac, Windows, Linux  
+✅ **Easy setup** - One command to start everything  
+✅ **Hot reload** - Code changes reflect immediately in dev mode  
+✅ **Production-ready** - Same setup works for deployment
+
+## Alternative: Running Without Docker (Local Development)
+
+If you prefer not to use Docker for local development, you can run the services directly with npm:
 
 ```bash
-# Development
-npm run dev                    # Start Next.js app
-npm run agent:dev              # Start agent in dev mode
+# Step 1: Install dependencies and download models
+npm install
+npm run agent:download
 
-# Agent Management
-npm run agent:download         # Download model files
-npm run agent:build            # Build agent for production
-npm run agent:start            # Run agent in production
+# Step 2: Start the agent (Terminal 1)
+npm run agent:dev
 
-# Deployment
-vercel deploy                  # Deploy web app
-lk agent create                # Deploy agent to LiveKit Cloud
+# Step 3: Start the web app (Terminal 2)
+npm run dev
 ```
 
-## Architecture at a Glance
+⚠️ **Prerequisites**: 
+- Node.js 20+ installed
+- May encounter platform-specific issues
+- Requires running two separate terminal windows
 
-```
-Browser (User)
-    ↓ [speaks]
-LiveKit Cloud (WebRTC)
-    ↓ [audio stream]
-Voice Agent (agent.ts)
-    ↓ [processes with AI]
-    ├─→ Speech-to-Text (AssemblyAI)
-    ├─→ LLM (OpenAI GPT-4.1)
-    └─→ Text-to-Speech (Rime)
-    ↓ [audio stream]
-LiveKit Cloud
-    ↓ [audio stream]
-Browser (User hears response)
-```
-
-## Pricing
-
-**During Development:**
-- LiveKit Cloud: Free tier includes 10,000 minutes/month
-- Rime TTS: Via LiveKit Inference (billed through LiveKit)
-- OpenAI GPT: Via LiveKit Inference (billed through LiveKit)
-
-**For Production:**
-- Check [LiveKit Pricing](https://livekit.io/pricing)
-- Consider using your own API keys for Rime and OpenAI
+💡 **Recommendation**: Use Docker Compose for development (single command) and Render for production (auto-scaling).
 
 ## Get Help
 
 Stuck? We're here to help!
 
-1. Check [INTEGRATION_GUIDE.md](INTEGRATION_GUIDE.md) for detailed docs
-2. Review [AGENT_README.md](AGENT_README.md) for agent-specific info
-3. Join [LiveKit Discord](https://livekit.io/discord)
-4. Check [GitHub Issues](https://github.com/livekit/agents)
+1. 📖 Check [DOCKER.md](DOCKER.md) for Docker troubleshooting
+2. 📖 Review [agent/AGENT_README.md](agent/AGENT_README.md) for agent configuration
+3. 💬 Join [LiveKit Discord](https://livekit.io/discord) - Active community support
+4. 🚀 [Render Community](https://community.render.com) - Deployment questions
+5. 🐛 [GitHub Issues](https://github.com/livekit/agents) - Report bugs
+
+## Troubleshooting Docker Issues
+
+### Docker daemon not running
+
+```bash
+# macOS: Start Docker Desktop from Applications
+# Linux: sudo systemctl start docker
+# Windows: Start Docker Desktop from Start Menu
+```
+
+### Permission denied errors (Linux)
+
+```bash
+sudo usermod -aG docker $USER
+# Then log out and back in
+```
+
+### Containers won't start
+
+```bash
+# Clean rebuild
+docker-compose -f docker-compose.dev.yml down -v
+docker-compose -f docker-compose.dev.yml up --build
+```
 
 ---
 

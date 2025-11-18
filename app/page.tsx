@@ -77,6 +77,17 @@ export default function Home() {
               OpenAI
             </a>
           </p>
+          <p>
+            Powered by{" "}
+            <a
+              href="https://render.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-primary hover:underline"
+            >
+              Render
+            </a>
+          </p>
         </div>
       </main>
     </div>

@@ -2,6 +2,8 @@
 
 A full-stack voice AI application built with [LiveKit Agents](https://docs.livekit.io/agents), [Next.js](https://nextjs.org), and [Rime TTS](https://rime.ai/). Real-time voice conversations powered by GPT-4.1 Mini, with high-quality TTS and advanced speech recognition.
 
+**Ready for production deployment on [Render](https://render.com) with auto-scaling and Docker.**
+
 - [Deploy to Render](#-deploy-to-render)
 - [Features](#-features)
 - [Repository Structure](#-repository-structure)
@@ -61,20 +63,11 @@ This project is pre-configured for one-click deployment to [Render](https://rend
    - Web App: `https://your-app-name.onrender.com`
    - Agent will auto-connect via LiveKit Cloud
 
-**Alternative: Deploy Agent to LiveKit Cloud**
+**Important: Agent Resource Requirements**
 
-For production workloads, consider deploying the agent directly to LiveKit Cloud:
+⚠️ **The agent service requires at least 8 GB of RAM** to load AI models (VAD, turn detection).
 
-```bash
-lk agent create
-```
-
-This provides managed hosting, auto-scaling, and built-in monitoring.
-
-**Cost Estimate (Render Free Tier + LiveKit Free Tier):**
-- 2 Web Services (app + agent): Free tier available
-- LiveKit Cloud: Free tier includes 50GB of bandwidth/month
-- Total: $0/month (with free tier limitations)
+On Render, use the **Standard plan or higher** for the agent worker service. The included `render.yaml` is already configured with auto-scaling and health checks for production workloads.
 
 ## ✨ Features
 
@@ -83,7 +76,7 @@ This provides managed hosting, auto-scaling, and built-in monitoring.
 - 🗣️ **High-Quality TTS** - Rime TTS with multiple voice options
 - 🎧 **Advanced STT** - AssemblyAI for accurate speech recognition
 - 🔇 **Noise Cancellation** - Built-in background noise reduction
-- 🚀 **Easy Deployment** - One-click Render.com deployment + LiveKit Cloud integration
+- 🚀 **Production-Ready Deployment** - Pre-configured for Render with auto-scaling and Docker
 
 ## 📁 Repository Structure
 
@@ -111,6 +104,7 @@ render-voice-agent/
 
 **Requirements:**
 - Docker & Docker Compose
+- **At least 8 GB of RAM** available for the agent (for AI model loading)
 - Node.js 20 or higher (for local development without Docker)
 - LiveKit Cloud account ([sign up](https://cloud.livekit.io/))
 - API keys for Rime, OpenAI, and AssemblyAI
@@ -338,12 +332,10 @@ lsof -i :3000
 
 ## 📚 Additional Documentation
 
-- `QUICK_START.md` - Comprehensive getting started guide
+- `QUICK_START.md` - Comprehensive getting started guide with Docker
 - `agent/AGENT_README.md` - Agent configuration and customization
-- `INTEGRATION_GUIDE.md` - Frontend integration details
-- `DOCKER.md` - Docker deployment guide
-- `RENDER_DEPLOYMENT.md` - Render deployment guide
-- `DEPLOYMENT_CHECKLIST.md` - Pre-deployment checklist
+- `DOCKER.md` - Local development with Docker Compose
+- [Render Documentation](https://render.com/docs) - Platform-specific deployment guides
 
 **External Resources:**
 - [LiveKit Documentation](https://docs.livekit.io/)
