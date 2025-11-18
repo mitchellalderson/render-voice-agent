@@ -7,8 +7,8 @@ Get your voice agent up and running in 5 minutes with Docker!
 - **Docker Desktop** installed ([download here](https://www.docker.com/products/docker-desktop))
 - **LiveKit Cloud account** (free at https://cloud.livekit.io)
 - **API Keys** (optional, but recommended):
-  - Rime API key from https://rime.ai/ (for better TTS)
-  - OpenAI API key (for GPT-4)
+  - Rime API key from https://rime.ai/ (for TTS)
+  - OpenAI API key (for GPT-4.1 Mini LLM)
   - AssemblyAI API key (for STT)
 
 💡 **Note**: You can use LiveKit's built-in AI services without providing API keys, but having your own keys gives you more control and potentially lower costs.

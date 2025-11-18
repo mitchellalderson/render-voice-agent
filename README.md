@@ -111,12 +111,11 @@ render-voice-agent/
 
 **Setup:**
 
-1. **Clone and install dependencies:**
+1. **Clone the repository:**
 
 ```bash
 git clone <your-repo-url>
 cd render-voice-agent
-npm install
 ```
 
 2. **Set up LiveKit Cloud credentials:**
@@ -144,23 +143,20 @@ OPENAI_API_KEY=sk-your-openai-key
 ASSEMBLYAI_API_KEY=your-assemblyai-key
 ```
 
-4. **Download agent model files:**
+4. **Start all services with Docker:**
 
 ```bash
-npm run agent:download
+docker-compose -f docker-compose.dev.yml up
 ```
 
-5. **Start all services with Docker:**
+This will:
+- ✅ Automatically download AI model files during first build
+- ✅ Start Next.js app (port 3000) with hot-reload
+- ✅ Start LiveKit voice agent
 
-```bash
-docker-compose up -d
-```
+☕ **First time?** The initial build takes 2-3 minutes to download AI models.
 
-This starts:
-- Next.js app (port 3000)
-- LiveKit voice agent
-
-6. **Access the application:**
+5. **Access the application:**
 
 Open http://localhost:3000 in your browser and start a voice conversation!
 
@@ -196,12 +192,16 @@ docker-compose logs -f agent
 docker-compose up -d --build
 ```
 
-**Run without Docker (development):**
+**Run without Docker (local development):**
 ```bash
-# Terminal 1: Run the Next.js app
+# Step 1: Install dependencies and download AI models
+npm install
+npm run agent:download
+
+# Step 2 (Terminal 1): Run the Next.js app
 npm run dev
 
-# Terminal 2: Run the LiveKit agent
+# Step 3 (Terminal 2): Run the LiveKit agent
 npm run agent:dev
 ```
 
@@ -224,7 +224,7 @@ Available voices: rainforest, lagoon, astra, and more. See [Rime TTS docs](https
 
 ```typescript
 llm: new inference.LLM({
-  model: 'openai/gpt-4o', // Try: openai/gpt-4o, anthropic/claude-3.5-sonnet
+  model: 'openai/gpt-4.1-mini', // Try: openai/gpt-4o, anthropic/claude-3.5-sonnet
 }),
 ```
 
