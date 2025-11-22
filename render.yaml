@@ -58,17 +58,6 @@ projects:
               - key: RIME_API_KEY
                 sync: false
             
-            # Allow graceful shutdown for active agent sessions
-            # 300s is the standard maximum. Contact Render support if you need more.
-            maxShutdownDelaySeconds: 300
-            
-            # Auto-scaling configuration
-            scaling:
-              minInstances: 1
-              maxInstances: 4
-              targetCPUPercent: 60
-              targetMemoryPercent: 60
-            
             # Auto-deploy from main branch
             autoDeploy: true
 
