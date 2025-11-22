@@ -72,5 +72,3 @@ projects:
             # Auto-deploy from main branch
             autoDeploy: true
 
-        version: "1"
-
