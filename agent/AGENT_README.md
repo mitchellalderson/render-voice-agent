@@ -48,7 +48,7 @@ npm install
 
 ### 2. Configure Environment Variables
 
-The `.env.local` file has been created for you. You need to populate it with your API keys:
+The `.env` file has been created for you. You need to populate it with your API keys:
 
 #### Get LiveKit Cloud API Keys
 
@@ -59,14 +59,14 @@ lk cloud auth
 lk app env -w
 ```
 
-This will update your `.env.local` file with:
+This will update your `.env` file with:
 - `LIVEKIT_API_KEY`
 - `LIVEKIT_API_SECRET`
 - `LIVEKIT_URL`
 
 #### Add Rime API Key
 
-Manually add your Rime API key to `.env.local`:
+Manually add your Rime API key to `.env`:
 
 ```
 RIME_API_KEY=your_rime_api_key_here
@@ -241,7 +241,7 @@ See the [Telephony integration guide](https://docs.livekit.io/agents/start/telep
 ## Troubleshooting
 
 ### Agent won't start
-- Ensure all environment variables are set in `.env.local`
+- Ensure all environment variables are set in `.env`
 - Run `npm run agent:download` to download model files
 - Check that you're authenticated with LiveKit CLI: `lk cloud auth`
 
@@ -268,7 +268,7 @@ See the [Telephony integration guide](https://docs.livekit.io/agents/start/telep
 ```
 render-voice-agent/
 ├── agent.ts              # LiveKit agent code
-├── .env.local           # Environment variables (not in git)
+├── .env                 # Environment variables (not in git)
 ├── package.json         # Dependencies and scripts
 ├── tsconfig.json        # TypeScript configuration
 ├── app/                 # Next.js application

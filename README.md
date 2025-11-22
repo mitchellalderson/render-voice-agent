@@ -2,13 +2,13 @@
 
 A full-stack voice AI application built with [LiveKit Agents](https://docs.livekit.io/agents), [Next.js](https://nextjs.org), and [Rime TTS](https://rime.ai/). Real-time voice conversations powered by GPT-4.1 Mini, with high-quality TTS and advanced speech recognition.
 
-**Ready for production deployment on [Render](https://render.com) with auto-scaling and Docker.**
+**Deploy to production on [Render](https://render.com) with auto-scaling. Develop locally with Docker.**
 
-- [Deploy to Render](#-deploy-to-render)
+- [Deploy to Production (Render)](#-deploy-to-render)
 - [Features](#-features)
 - [Repository Structure](#-repository-structure)
-- [Quick Start with Docker](#-quick-start-with-docker)
-- [Docker Commands](#-docker-commands)
+- [Local Development with Docker](#-quick-start-with-docker)
+- [Local Docker Commands](#-docker-commands)
 - [Customization](#-customization)
 - [Environment Variables](#-environment-variables)
 - [Troubleshooting](#-troubleshooting)
@@ -16,9 +16,9 @@ A full-stack voice AI application built with [LiveKit Agents](https://docs.livek
 - [Contributing](#-contributing)
 - [License](#-license)
 
-## 🚀 Deploy to Render
+## 🚀 Deploy to Production (Render)
 
-This project is pre-configured for one-click deployment to [Render](https://render.com/) using the included `render.yaml` blueprint.
+This project is pre-configured for production deployment to [Render](https://render.com/) using the included `render.yaml` blueprint.
 
 **What you get:**
 - ✅ Next.js web app with voice UI
@@ -94,22 +94,21 @@ render-voice-agent/
 │   ├── page.tsx          # Main application page
 │   └── globals.css       # Global styles
 ├── docker-compose.yml     # Full-stack local development (app + agent)
-├── docker-compose.dev.yml # Development mode with hot reload
 ├── render.yaml           # Production deployment configuration (Render.com)
 ├── package.json          # Dependencies and scripts
 └── README.md
 ```
 
-## 🚀 Quick Start with Docker
+## 💻 Local Development with Docker
 
-**Requirements:**
+**Requirements for local development:**
 - Docker & Docker Compose
 - **At least 8 GB of RAM** available for the agent (for AI model loading)
-- Node.js 20 or higher (for local development without Docker)
+- Node.js 20 or higher (optional, for running without Docker)
 - LiveKit Cloud account ([sign up](https://cloud.livekit.io/))
 - API keys for Rime, OpenAI, and AssemblyAI
 
-**Setup:**
+**Local setup:**
 
 1. **Clone the repository:**
 
@@ -124,60 +123,55 @@ cd render-voice-agent
 # Authenticate with LiveKit Cloud
 lk cloud auth
 
-# Generate credentials and save to .env.local
+# Generate credentials and save to .env
 lk app env -w
 ```
 
-This creates a `.env.local` file with:
+This creates a `.env` file with:
 ```env
 LIVEKIT_API_KEY=...
 LIVEKIT_API_SECRET=...
 LIVEKIT_URL=wss://...
 ```
 
-3. **Add additional API keys to `.env.local`:**
+3. **Add additional API key to `.env`:**
 
 ```env
 RIME_API_KEY=your-rime-api-key
-OPENAI_API_KEY=sk-your-openai-key
-ASSEMBLYAI_API_KEY=your-assemblyai-key
 ```
 
-4. **Start all services with Docker:**
+4. **Start all services locally with Docker:**
 
 ```bash
-docker-compose -f docker-compose.dev.yml up
+docker-compose up
 ```
 
 This will:
 - ✅ Automatically download AI model files during first build
-- ✅ Start Next.js app (port 3000) with hot-reload
+- ✅ Start Next.js app on localhost:3000
 - ✅ Start LiveKit voice agent
 
 ☕ **First time?** The initial build takes 2-3 minutes to download AI models.
 
-5. **Access the application:**
+5. **Access your local application:**
 
 Open http://localhost:3000 in your browser and start a voice conversation!
 
-## 📦 Docker Commands
+**Ready for production?** See [Deploy to Production (Render)](#-deploy-to-render) above.
 
-**Start all services:**
+## 📦 Local Docker Commands
+
+**Start all services locally:**
 ```bash
 docker-compose up -d
 ```
 
-**Start in development mode (with hot reload):**
-```bash
-docker-compose -f docker-compose.dev.yml up
-```
-
-**Stop all services:**
+**Stop all local services:**
 ```bash
 docker-compose down
 ```
 
-**View logs:**
+**View local logs:**
 ```bash
 # All services
 docker-compose logs -f
@@ -192,7 +186,7 @@ docker-compose logs -f agent
 docker-compose up -d --build
 ```
 
-**Run without Docker (local development):**
+**Alternative: Run without Docker (local development):**
 ```bash
 # Step 1: Install dependencies and download AI models
 npm install
@@ -220,13 +214,6 @@ tts: new TTS({
 
 Available voices: rainforest, lagoon, astra, and more. See [Rime TTS docs](https://docs.rime.ai/).
 
-### Change the LLM
-
-```typescript
-llm: new inference.LLM({
-  model: 'openai/gpt-4.1-mini', // Try: openai/gpt-4o, anthropic/claude-3.5-sonnet
-}),
-```
 
 ### Modify Agent Personality
 
@@ -257,7 +244,7 @@ instructions: `You are a friendly and helpful voice assistant...`
 
 ## 🔧 Environment Variables
 
-Required environment variables (`.env.local`):
+Required environment variables (`.env`):
 
 ```env
 # LiveKit Cloud (get with: lk cloud auth && lk app env -w)
@@ -276,7 +263,7 @@ ASSEMBLYAI_API_KEY=...    # Get from https://www.assemblyai.com/
 **1. Agent won't start:**
 ```bash
 # Ensure all API keys are set
-cat .env.local
+cat .env
 
 # Download model files
 npm run agent:download
@@ -291,19 +278,19 @@ lk cloud auth
 - Verify LiveKit Cloud connection in network tab
 - Try a different browser (Chrome recommended)
 
-**3. Docker build fails:**
+**3. Local Docker build fails:**
 ```bash
 # Ensure Docker is running
 docker ps
 
-# Try rebuilding from scratch
+# Try rebuilding from scratch locally
 docker-compose build --no-cache
 
-# Check Docker logs
+# Check local Docker logs
 docker-compose logs agent
 ```
 
-**4. Docker port conflicts:**
+**4. Local Docker port conflicts:**
 ```bash
 # Check what's using the port
 lsof -i :3000
@@ -320,22 +307,21 @@ lsof -i :3000
 **6. API key errors:**
 - Verify all API keys are valid and active
 - Check API key permissions and quotas
-- Ensure keys are properly set in `.env.local`
+- Ensure keys are properly set in `.env`
 - For Render deployment, verify environment variables are set in the Render dashboard
 
 **Getting more help:**
-1. Check service logs: `docker-compose logs <service-name>`
-2. Verify all environment variables are set correctly
-3. Ensure Docker containers are healthy: `docker-compose ps`
-4. See detailed troubleshooting in `QUICK_START.md` and `DOCKER.md`
+1. **Local development**: Check logs with `docker-compose logs <service-name>`
+2. **Production issues**: Check the Render dashboard for logs and metrics
+3. Verify all environment variables are set correctly (`.env` locally, Render dashboard for production)
+4. See detailed troubleshooting in `QUICK_START.md`
 5. Join the [LiveKit Discord](https://livekit.io/discord) community
 
 ## 📚 Additional Documentation
 
-- `QUICK_START.md` - Comprehensive getting started guide with Docker
+- `QUICK_START.md` - Comprehensive local development guide with Docker
 - `agent/AGENT_README.md` - Agent configuration and customization
-- `DOCKER.md` - Local development with Docker Compose
-- [Render Documentation](https://render.com/docs) - Platform-specific deployment guides
+- [Render Documentation](https://render.com/docs) - Production deployment guides
 
 **External Resources:**
 - [LiveKit Documentation](https://docs.livekit.io/)

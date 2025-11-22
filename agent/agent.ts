@@ -15,7 +15,7 @@ import dotenv from 'dotenv';
 import { fileURLToPath } from 'node:url';
 import {TTS} from '@livekit/agents-plugin-rime';
 
-dotenv.config({ path: '.env.local' });
+dotenv.config({ path: '.env' });
 
 class Assistant extends voice.Agent {
   constructor() {
@@ -93,7 +93,7 @@ export default defineAgent({
       // To use a realtime model instead of a voice pipeline, use the following session setup instead.
       // (Note: This is for the OpenAI Realtime API. For other providers, see https://docs.livekit.io/agents/models/realtime/))
       // 1. Install '@livekit/agents-plugin-openai'
-      // 2. Set OPENAI_API_KEY in .env.local
+      // 2. Set OPENAI_API_KEY in .env
       // 3. Add import `import * as openai from '@livekit/agents-plugin-openai'` to the top of this file
       // 4. Use the following session setup instead of the version above
       // const session = new voice.AgentSession({

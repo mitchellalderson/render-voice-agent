@@ -153,7 +153,7 @@ export default function VoiceAgent({ roomName = 'voice-agent-room' }: VoiceAgent
         <p className="text-destructive text-center">
           Missing NEXT_PUBLIC_LIVEKIT_URL environment variable.
           <br />
-          Please add it to your .env.local file.
+          Please add it to your .env file.
         </p>
       </div>
     );
